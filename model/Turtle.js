@@ -6,7 +6,7 @@ class Turtle extends Sprite {
     img.src = './assets/turtle.png';
     super(x, y, 50, 50, img, 0, 0);
 
-    this.displacement = 7;
+    this.displacement = 12;
     document.addEventListener('keydown', this.keyDownHandler.bind(this));
     document.addEventListener('keyup', this.keyUpHandler.bind(this));
   }

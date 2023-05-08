@@ -7,8 +7,9 @@ class Game {
     this.ctx = ctx;
     this.isPlaying = false;
     this.isGameOver = false;
+    this.won = false;
     this.soundtrack = new Audio('./assets/music.wav');
-    this.year = 1950; // TODO
+    this.year = 1950;
 
     this.turtle = new Turtle(
       this.canvas.width / 2 - 25,
@@ -33,10 +34,15 @@ class Game {
       this.isPlaying = true;
       this.soundtrack.play();
       this.soundtrack.loop = true;
+      this.startTimer();
     }
   }
 
   play() {
+    if (this.year === 2023) {
+      this.isGameOver = true;
+      this.won = true;
+    }
     if (this.isGameOver) {
       this.clearSprites();
       return;
@@ -56,14 +62,16 @@ class Game {
   }
 
   displayText() {
-    this.ctx.font = '24px Arial';
+    this.ctx.font = '18px Arial';
     this.ctx.fillStyle = 'white';
-    // this.ctx.fillText('Pollution: ' + this.score, 8, 20);
     if (this.isGameOver) {
-      this.ctx.fillText('Game Over!', 8, 40);
-    } else {
-      // this.ctx.fillText('Year: ' + this.year, 8, 40);
+      if (this.won) {
+        this.ctx.fillText('You Win!', 8, 60);
+      } else {
+        this.ctx.fillText('Game Over!', 8, 60);
+      }
     }
+    this.ctx.fillText('Year: ' + this.year, 8, 40);
   }
 
   handleTurtle() {
@@ -72,7 +80,7 @@ class Game {
   }
 
   spawnPlastic() {
-    if (Game.getRandomNumber(0, 30) === 0) {
+    if (this.isPlaying && this.shouldSpawnPlastic()) {
       const plastic = new Plastic(
         Game.getRandomNumber(0, this.canvas.width - 40), // x
         0, // y
@@ -80,6 +88,10 @@ class Game {
       );
       this.plastics.push(plastic);
     }
+  }
+
+  shouldSpawnPlastic() {
+    return Game.getRandomNumber(this.year, 2024) === 2023;
   }
 
   handlePlastics() {
@@ -96,6 +108,12 @@ class Game {
         this.plastics.splice(i, 1);
       }
     }
+  }
+
+  startTimer() {
+    this.timer = setInterval(() => {
+      this.year += 1;
+    }, 3000);
   }
 
   static getRandomNumber(min, max) {
